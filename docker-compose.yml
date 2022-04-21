@@ -1,0 +1,44 @@
+version: "3.8"
+services: 
+  
+    
+  mongo:
+    image: mongo
+    restart: unless-stopped
+    container_name: mongo
+    logging: 
+        driver: none
+    ports: 
+      - "27017:27017"
+    networks: 
+      - red-aplicacion
+  
+  servidor:
+    container_name: servidor
+    restart: always
+    build: ./backend
+    environment: 
+      - SERVIDOR=201602520
+      - MONGO=mongo
+    ports:
+      - "4000:4000"
+    depends_on:  
+      - mongo
+    networks:
+      - red-aplicacion
+  front:
+    container_name: front
+    build: ./frontend
+   # command: sh -c "while true; do wget -q -S -O /dev/null http://servidor:4000/listar && sleep 4; done"
+    environment:
+      - REACT_APP_SERVIDOR=servidor
+    depends_on: 
+      - servidor
+    ports: 
+      - "80:3000"
+    networks: 
+      - red-aplicacion
+
+networks: 
+    red-aplicacion:
+    
