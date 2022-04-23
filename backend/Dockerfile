@@ -1,15 +1,17 @@
-FROM node:latest
+FROM node:10-alpine
 
-RUN mkdir -p /usr/src/app
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
-WORKDIR /usr/src/app
+WORKDIR /home/node/app
 
 COPY package*.json ./
 
+USER node
+
 RUN npm install
 
-COPY . .
+COPY --chown=node:node . .
 
-EXPOSE 3000
+EXPOSE 4000
 
 CMD ["npm","run","dev"]
