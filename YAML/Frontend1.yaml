@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: sopes2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  # Tiempo de espera
+  minReadySeconds: 20
+  # Rolling Update
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - image: pablopachecof/so2frontv1
+        name: so2frontv1
+        #command: [ "npm", "start" ]
+        #ports:
+        #- containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: sopes2
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: frontend
+  type: LoadBalancer
